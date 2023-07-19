@@ -7,8 +7,9 @@ class Data:
    
 	def to_dict(self) -> dict:
 		data = {}
-		for key, value in self.__dict__:
-			if isinstance(self, getattr(self, value)):
+		for key in self.__dict__:
+			value = getattr(self, key)
+			if type(self) == type(value):
 				value = value.to_dict()
 			data[key] = value
 		return data
@@ -26,10 +27,7 @@ class Data:
 		self.__dict__[key] = value
 	
 	def __getattr__(self, item):
-		try:
-			return self.__dict__[item]
-		except KeyError:
-			return AttributeError(f"{self.__class__.__name__} object has no attribute {item}")
+		return getattr(self.to_dict(), item, 100)
 	
 	def __repr__(self) -> str:
 		return f"{self.__class__.__name__}({self.__dict__})"
