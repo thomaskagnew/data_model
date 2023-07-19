@@ -27,8 +27,16 @@ class Data:
 		self.__dict__[key] = value
 	
 	def __getattr__(self, item):
-		return getattr(self.to_dict(), item, 100)
-	
+		if item in self.__dict__:
+			return self.__dict__[item]
+		for key in self.__dict__:
+			value = getattr(self, key)
+			if type(self) == type(value):
+				return value.__getattr__(item)
+		# set default value 100 and return default value
+		self.__setattr__(item, 100)
+		return 100
+
 	def __repr__(self) -> str:
 		return f"{self.__class__.__name__}({self.__dict__})"
 
